@@ -1,0 +1,2139 @@
+//SQL CONNECTION
+
+package frontenddbms;
+import java.sql.*;
+import javax.swing.*;
+public class sql_connection {
+		    static Connection con=null;
+	    public static Connection Connect()   	
+	    	
+	    {
+	        try
+	        {
+	            Class.forName("oracle.jdbc.driver.OracleDriver");
+	            con=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:oracledb", "C##","Abhi7696");
+	            //JOptionPane.showMessageDialog(null,"Connection established");
+	            return con;
+	        }
+	        catch(Exception e)
+	        {
+	            JOptionPane.showMessageDialog(null,e);
+	            return null;
+	        }
+	        
+	}
+
+}
+
+
+//MAIN PAGE
+
+package frontenddbms;
+
+import java.awt.EventQueue;
+import java.sql.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Vector;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+import java.awt.Font;
+import java.awt.Color;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
+public class mainpage {
+
+	public JFrame frame;
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					
+					mainpage obj = new mainpage();
+					obj.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public mainpage() {
+		con = sql_connection.Connect();
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 750, 550);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JButton btnAdministrator = new JButton("Administrator");
+		btnAdministrator.setBounds(522, 289, 159, 34);
+		btnAdministrator.setForeground(new Color(0, 0, 0));
+		btnAdministrator.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Administrator obj = new Administrator();
+				obj.setVisible(true);
+				frame.dispose();
+			}
+		});
+		
+		JButton btnGuest = new JButton("GUEST");
+		btnGuest.setBounds(41, 289, 159, 34);
+		btnGuest.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		btnGuest.setForeground(new Color(0, 0, 0));
+		btnGuest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				guestdetails obj = new guestdetails();
+				obj.setVisible(true);
+				frame.dispose();
+			}
+		});
+		frame.getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel_1 = new JLabel("EVENT MANAGEMENT SYSTEM");
+		lblNewLabel_1.setBounds(41, 58, 640, 132);
+		lblNewLabel_1.setForeground(Color.WHITE);
+		lblNewLabel_1.setFont(new Font("Verdana", Font.BOLD, 38));
+		frame.getContentPane().add(lblNewLabel_1);
+		frame.getContentPane().add(btnGuest);
+		frame.getContentPane().add(btnAdministrator);
+		
+		JLabel lblNewLabel_2 = new JLabel("Click here to organize an event with us.");
+		lblNewLabel_2.setBounds(178, 451, 359, 39);
+		lblNewLabel_2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				client obj = new client();
+				obj.setVisible(true);
+				frame.dispose();
+			}
+		});
+		lblNewLabel_2.setForeground(Color.WHITE);
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 18));
+		frame.getContentPane().add(lblNewLabel_2);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\event1.jpg"));
+		lblNewLabel.setBounds(0, 0, 732, 503);
+		frame.getContentPane().add(lblNewLabel);
+		
+		
+	}
+}
+
+
+//GUEST DETAILS
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import javax.swing.ImageIcon;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class guestdetails extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	private JTable table_1;
+	private JTable table_2;
+	private JTable table_3;
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+	private JTextField textField;
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					guestdetails frame = new guestdetails();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public guestdetails() {
+		con = sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1050, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Your Information");
+		lblNewLabel.setFont(new Font("Verdana", Font.BOLD, 16));
+		lblNewLabel.setBounds(451, 17, 175, 28);
+		contentPane.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Personal info");
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblNewLabel_1.setBounds(12, 163, 175, 16);
+		contentPane.add(lblNewLabel_1);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 197, 522, 41);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JLabel lblNewLabel_2 = new JLabel("Family/Friends");
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblNewLabel_2.setBounds(546, 71, 154, 28);
+		contentPane.add(lblNewLabel_2);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(546, 112, 278, 134);
+		contentPane.add(scrollPane_1);
+		
+		table_1 = new JTable();
+		scrollPane_1.setViewportView(table_1);
+		
+		JLabel lblNewLabel_3 = new JLabel("Event Info");
+		lblNewLabel_3.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblNewLabel_3.setBounds(12, 290, 96, 16);
+		contentPane.add(lblNewLabel_3);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(12, 319, 435, 41);
+		contentPane.add(scrollPane_2);
+		
+		table_2 = new JTable();
+		scrollPane_2.setViewportView(table_2);
+		
+		JLabel lblBy = new JLabel("By");
+		lblBy.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblBy.setBounds(505, 284, 56, 28);
+		contentPane.add(lblBy);
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBounds(505, 319, 198, 41);
+		contentPane.add(scrollPane_3);
+		
+		table_3 = new JTable();
+		scrollPane_3.setViewportView(table_3);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] {"Leela Palace", "Ritz-Carlton", "JW Mariott", "Pride", "Taj"}));
+		comboBox.setBounds(836, 140, 184, 28);
+		contentPane.add(comboBox);
+		
+		
+		JComboBox comboBox_1 = new JComboBox();
+		comboBox_1.setModel(new DefaultComboBoxModel(new String[] {"Deluxe", "Ultra Deluxe", "Executive", "Super Executive", "Suite"}));
+		comboBox_1.setBounds(836, 210, 184, 28);
+		contentPane.add(comboBox_1);
+		
+		JButton btnNewButton_1 = new JButton("Submit");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try{String sql1="select guestid from guests where guestid=? ";
+				PreparedStatement ps=con.prepareStatement(sql1);
+				ps.setString(1,textField.getText());
+				ResultSet rs=ps.executeQuery();
+				if(rs.next())
+				{	String gid_=rs.getString("guestid");
+				    String  x=String.valueOf(comboBox.getSelectedItem());
+				    String  y=String.valueOf(comboBox_1.getSelectedItem());
+				    String sql="insert into guestupdated (guid,hotel,type) values('"+gid_+"','"+x+"','"+y+"')";
+					pst=con.prepareStatement(sql);
+					pst.execute();
+					JOptionPane.showMessageDialog(null,"Your Selection has been taken");
+				
+				}
+				
+				}
+				catch(Exception r){
+					JOptionPane.showMessageDialog(null, " you have already chosen your option. Cannot Choose again");
+				}
+				
+				
+			}
+		});
+		btnNewButton_1.setBounds(915, 282, 105, 34);
+		contentPane.add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Log Out");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainpage obj = new mainpage();
+				obj.frame.setVisible(true);
+				guestdetails.this.dispose();
+			}
+		});
+		btnNewButton_2.setBounds(798, 282, 105, 34);
+		contentPane.add(btnNewButton_2);
+		
+		JLabel lblNewLabel_4 = new JLabel("Guest ID : ");
+		lblNewLabel_4.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblNewLabel_4.setBounds(12, 13, 96, 28);
+		contentPane.add(lblNewLabel_4);
+		
+		textField = new JTextField();
+		textField.setBounds(95, 17, 116, 22);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		JButton btnNewButton = new JButton("Log In");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{
+					con = sql_connection.Connect();
+				String sql="select guestid from guests where guestid=? ";
+				
+				pst=con.prepareStatement(sql);
+				 
+			    pst.setString(1,textField.getText());
+				rs=pst.executeQuery();
+				if(rs.next())
+				{
+					
+					String sqll="select guestname,guestid,guestemail,guestphone from guests where guestid=? ";
+					String sqlll="select  DNAME,DRELATION from dependents,guests where guestid=? AND gid=guestid ";
+					String sqllll="select  EVENTNAME,EVENTVENUE,EDATETIME from events,guests where guestid=? and EVID=eventid ";
+					String sqlllll="select  CLIENTNAME from client,events,guests where guestid=? AND  EVID=eventid AND ECLIENTID=CLIENTID";
+					
+					PreparedStatement pst1=con.prepareStatement(sqll);
+					pst1.setString(1,textField.getText());
+					 PreparedStatement pst2=con.prepareStatement(sqlll);
+					 pst2.setString(1,textField.getText());
+					 PreparedStatement pst3=con.prepareStatement(sqllll);
+					 pst3.setString(1,textField.getText());
+					 PreparedStatement pst4=con.prepareStatement(sqlllll);
+					 pst4.setString(1,textField.getText());
+					ResultSet rs1= pst1.executeQuery();
+					ResultSet rs2=pst2.executeQuery();
+					ResultSet rs3=pst3.executeQuery();
+					ResultSet rs4=pst4.executeQuery();
+					 table.setModel(DbUtils.resultSetToTableModel(rs1));
+					 table_1.setModel(DbUtils.resultSetToTableModel(rs2));
+					 table_2.setModel(DbUtils.resultSetToTableModel(rs3));
+					 table_3.setModel(DbUtils.resultSetToTableModel(rs4));}
+				
+				else
+				{
+					JOptionPane.showMessageDialog(null,"Incorrect ID. Please try again.");
+				}
+				}
+				catch(Exception e)
+				{
+					JOptionPane.showMessageDialog(null,e);
+				}
+			}
+		});
+		btnNewButton.setBounds(11, 54, 97, 25);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_3 = new JButton("Back");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainpage obj = new mainpage();
+				obj.frame.setVisible(true);
+				guestdetails.this.dispose();
+			}
+		});
+		btnNewButton_3.setBounds(114, 54, 97, 25);
+		contentPane.add(btnNewButton_3);
+		
+		JLabel lblNewLabel_8 = new JLabel("Type");
+		lblNewLabel_8.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblNewLabel_8.setBounds(836, 181, 56, 16);
+		contentPane.add(lblNewLabel_8);
+		
+		JLabel lblNewLabel_7 = new JLabel("Hotel");
+		lblNewLabel_7.setFont(new Font("Verdana", Font.PLAIN, 14));
+		lblNewLabel_7.setBounds(836, 111, 56, 16);
+		contentPane.add(lblNewLabel_7);
+		
+		JButton btnNewButton_4 = new JButton("Room Details");
+		btnNewButton_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				roomdet obj = new roomdet(textField.getText());
+				obj.setVisible(true);
+				guestdetails.this.dispose();
+			}
+		});
+		btnNewButton_4.setBounds(904, 329, 116, 34);
+		contentPane.add(btnNewButton_4);
+		
+		JLabel lblNewLabel_5 = new JLabel("New label");
+		lblNewLabel_5.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\perfect-venue.jpg"));
+		lblNewLabel_5.setBounds(0, 0, 1032, 503);
+		contentPane.add(lblNewLabel_5);
+		guestdetails.this.getRootPane().setDefaultButton(btnNewButton);
+	}
+}
+
+
+//ROOM DETAILS
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JFormattedTextField;
+import javax.swing.ImageIcon;
+
+
+public class roomdet extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	private JTable table_1;
+
+ Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+	private JTable table_2;
+	private JTable table_3;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					roomdet frame = new roomdet();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public roomdet(String gid) {
+		con = sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 750, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Hotel Details");
+		lblNewLabel.setFont(new Font("Verdana", Font.BOLD, 20));
+		lblNewLabel.setBounds(297, 13, 205, 41);
+		contentPane.add(lblNewLabel);
+		
+		JButton btnNewButton = new JButton("Back");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				guestdetails obj = new guestdetails();
+				obj.setVisible(true);
+				roomdet.this.dispose();
+			}
+		});
+		btnNewButton.setBounds(608, 449, 112, 41);
+		contentPane.add(btnNewButton);
+		
+		JLabel lblNewLabel_1 = new JLabel("Personal Info");
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_1.setBounds(12, 77, 112, 41);
+		contentPane.add(lblNewLabel_1);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 117, 497, 41);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JLabel lblNewLabel_2 = new JLabel("No. of Dependents");
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_2.setBounds(12, 190, 139, 27);
+		contentPane.add(lblNewLabel_2);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(12, 230, 72, 41);
+		contentPane.add(scrollPane_1);
+		
+		table_1 = new JTable();
+		scrollPane_1.setViewportView(table_1);
+		
+		JLabel lblNewLabel_3 = new JLabel("Hotel Details");
+		lblNewLabel_3.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_3.setBounds(12, 319, 139, 27);
+		contentPane.add(lblNewLabel_3);
+		
+		JButton btnLoadDetails = new JButton("Load details");
+		btnLoadDetails.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try{
+					String sqll="select guestname,guestid,guestemail,guestphone,roomsreq from guests where guestid='"+gid+"' ";
+					String sqlll="select  count(*)as no from dependents,guests where guestid='"+gid+"' AND gid=guestid ";
+					String sqllll="select hotel,type from guestupdated where guid='"+gid+"'";
+					String sql ="select roomsreq as rooms_alloted from guests where guestid = '"+gid+"' ";
+					PreparedStatement pst1=con.prepareStatement(sqll);
+					PreparedStatement pst2=con.prepareStatement(sqlll);
+					PreparedStatement pst3=con.prepareStatement(sqllll);
+					PreparedStatement pst4=con.prepareStatement(sql);
+					ResultSet rs1= pst1.executeQuery();
+					ResultSet rs2= pst2.executeQuery();
+					ResultSet rs3= pst3.executeQuery();
+					ResultSet rs4= pst4.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs1));
+					table_1.setModel(DbUtils.resultSetToTableModel(rs2));
+					table_2.setModel(DbUtils.resultSetToTableModel(rs3));
+					table_3.setModel(DbUtils.resultSetToTableModel(rs4));
+					 JOptionPane.showMessageDialog(null,"Room no Details will be available once you checkin");
+					
+					}
+					catch( Exception e){System.out.println(e);}
+			}
+		});
+		btnLoadDetails.setBounds(484, 449, 112, 41);
+		contentPane.add(btnLoadDetails);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(12, 359, 422, 48);
+		contentPane.add(scrollPane_2);
+		
+		table_2 = new JTable();
+		scrollPane_2.setViewportView(table_2);
+		
+		
+		JLabel lblNewLabel_5 = new JLabel("Rooms Alloted");
+		lblNewLabel_5.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_5.setBounds(512, 196, 120, 16);
+		contentPane.add(lblNewLabel_5);
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBounds(512, 230, 72, 41);
+		contentPane.add(scrollPane_3);
+		
+		table_3 = new JTable();
+		scrollPane_3.setViewportView(table_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("New label");
+		lblNewLabel_4.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\perfect-venue.jpg"));
+		lblNewLabel_4.setBounds(0, 0, 732, 503);
+		contentPane.add(lblNewLabel_4);
+	
+		
+		}
+
+	public roomdet() {
+		con = sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 750, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Hotel Details");
+		lblNewLabel.setFont(new Font("Verdana", Font.BOLD, 20));
+		lblNewLabel.setBounds(297, 13, 205, 41);
+		contentPane.add(lblNewLabel);
+		
+		JButton btnNewButton = new JButton("Back");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				guestdetails obj = new guestdetails();
+				obj.setVisible(true);
+				roomdet.this.dispose();
+			}
+		});
+		btnNewButton.setBounds(608, 449, 112, 41);
+		contentPane.add(btnNewButton);
+		
+		JLabel lblNewLabel_1 = new JLabel("Personal Info");
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_1.setBounds(12, 77, 112, 41);
+		contentPane.add(lblNewLabel_1);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 117, 497, 41);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JLabel lblNewLabel_2 = new JLabel("No. of Dependents");
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_2.setBounds(12, 190, 139, 27);
+		contentPane.add(lblNewLabel_2);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(12, 230, 72, 41);
+		contentPane.add(scrollPane_1);
+		
+		table_1 = new JTable();
+		scrollPane_1.setViewportView(table_1);
+		
+		JLabel lblNewLabel_3 = new JLabel("Hotel Details");
+		lblNewLabel_3.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_3.setBounds(12, 319, 139, 27);
+		contentPane.add(lblNewLabel_3);
+		
+		JButton btnLoadDetails = new JButton("Load details");
+		btnLoadDetails.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
+		btnLoadDetails.setBounds(484, 449, 112, 41);
+		contentPane.add(btnLoadDetails);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(12, 359, 422, 48);
+		contentPane.add(scrollPane_2);
+		
+		table_2 = new JTable();
+		scrollPane_2.setViewportView(table_2);
+		
+		JLabel lblNewLabel_5 = new JLabel("Rooms Alloted");
+		lblNewLabel_5.setFont(new Font("Verdana", Font.PLAIN, 15));
+		lblNewLabel_5.setBounds(512, 196, 120, 16);
+		contentPane.add(lblNewLabel_5);
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBounds(512, 230, 72, 41);
+		contentPane.add(scrollPane_3);
+		
+		table_3 = new JTable();
+		scrollPane_3.setViewportView(table_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("New label");
+		lblNewLabel_4.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\perfect-venue.jpg"));
+		lblNewLabel_4.setBounds(0, 0, 732, 503);
+		contentPane.add(lblNewLabel_4);
+
+		// TODO Auto-generated constructor stub
+	}
+}
+
+
+//CLIENT
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import java.awt.Font;
+import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+
+public class client extends JFrame {
+	
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+
+	private JPanel contentPane;
+	private JTextField name;
+	private JTextField budget;
+	private JTextField phone;
+	private JTextField event;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					client frame = new client();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public client() {
+		con = sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 750, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel lblEnter = new JLabel("Enter The Details");
+		lblEnter.setForeground(Color.WHITE);
+		lblEnter.setFont(new Font("Verdana", Font.BOLD, 30));
+		lblEnter.setBounds(233, 13, 346, 70);
+		contentPane.add(lblEnter);
+		
+		phone = new JTextField();
+		phone.setBounds(179, 228, 156, 28);
+		contentPane.add(phone);
+		phone.setColumns(10);
+		
+		name = new JTextField();
+		name.setBounds(179, 146, 156, 28);
+		contentPane.add(name);
+		name.setColumns(10);
+		
+		budget = new JTextField();
+		budget.setBounds(179, 187, 155, 28);
+		contentPane.add(budget);
+		budget.setColumns(10);
+		
+		event = new JTextField();
+		event.setBounds(179, 269, 156, 28);
+		contentPane.add(event);
+		event.setColumns(10);
+		
+		JLabel lblName = new JLabel("Name");
+		lblName.setForeground(Color.WHITE);
+		lblName.setFont(new Font("Verdana", Font.PLAIN, 18));
+		lblName.setBounds(109, 149, 58, 16);
+		contentPane.add(lblName);
+		
+		JLabel lblNewLabel = new JLabel("Budget");
+		lblNewLabel.setForeground(Color.WHITE);
+		lblNewLabel.setFont(new Font("Verdana", Font.PLAIN, 18));
+		lblNewLabel.setBounds(101, 190, 66, 23);
+		contentPane.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Mob Phone no. ");
+		lblNewLabel_1.setForeground(Color.WHITE);
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 18));
+		lblNewLabel_1.setBounds(29, 231, 144, 16);
+		contentPane.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Required Event");
+		lblNewLabel_2.setForeground(Color.WHITE);
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 18));
+		lblNewLabel_2.setBounds(29, 272, 138, 16);
+		contentPane.add(lblNewLabel_2);
+		
+		JButton btnNewButton = new JButton("Submit");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{
+					String n=name.getText();
+					String c=phone.getText();
+					String e=event.getText();
+					String b=budget.getText();
+			
+			
+					String sql="insert into clientreqevent values (?,?,?,?)";
+					pst=con.prepareStatement(sql);
+					pst.setString(1, n);
+					pst.setString(2, c);
+					pst.setString(3, b);
+					pst.setString(4, e);
+					pst.executeQuery();
+					JOptionPane.showMessageDialog(null,"Your details have been recieved. Our team will get back to you shortly");
+
+				}
+				catch(Exception e)
+				{
+					JOptionPane.showMessageDialog(null,"Please Enter Valid Details");
+	
+				}
+							}
+		});
+		btnNewButton.setBounds(225, 331, 110, 35);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Back");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainpage obj=new mainpage();
+				obj.frame.setVisible(true);
+				client.this.dispose();
+			}
+		});
+		btnNewButton_1.setBounds(74, 331, 110, 35);
+		contentPane.add(btnNewButton_1);
+		
+		JLabel lblNewLabel_3 = new JLabel("New label");
+		lblNewLabel_3.setForeground(Color.WHITE);
+		lblNewLabel_3.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\decoration-for-wedding-reception-ideas.jpg"));
+		lblNewLabel_3.setBounds(0, 0, 732, 503);
+		contentPane.add(lblNewLabel_3);
+	}
+
+}
+
+
+
+//ADMINISTRATOR
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
+import java.awt.Font;
+import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
+
+public class Administrator extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JPasswordField passwordField;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Administrator frame = new Administrator();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public Administrator() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 750, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		textField = new JTextField();
+		textField.setBounds(363, 205, 148, 33);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Admin Login");
+		lblNewLabel_1.setForeground(Color.WHITE);
+		lblNewLabel_1.setFont(new Font("Verdana", Font.BOLD, 24));
+		lblNewLabel_1.setToolTipText("");
+		lblNewLabel_1.setBounds(268, 92, 178, 53);
+		contentPane.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Admin ID");
+		lblNewLabel_2.setForeground(new Color(255, 255, 255));
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 18));
+		lblNewLabel_2.setBounds(243, 206, 108, 25);
+		contentPane.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Password");
+		lblNewLabel_3.setForeground(new Color(255, 255, 255));
+		lblNewLabel_3.setFont(new Font("Verdana", Font.PLAIN, 18));
+		lblNewLabel_3.setBounds(243, 268, 108, 25);
+		contentPane.add(lblNewLabel_3);
+		
+		JButton btnNewButton = new JButton("Submit");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			String user="EMSadmin";
+			String pass="admin123";
+			String us=textField.getText();
+			String pas=passwordField.getText();
+			if(user.equals(us)&&pass.equals(pas))
+			{adminfunc obj=new adminfunc();
+			obj.setVisible(true);
+			Administrator.this.dispose();}
+			else
+			{JOptionPane.showMessageDialog(null, "Invalid username or password");}
+			
+			
+			}
+			
+		});
+		btnNewButton.setFont(new Font("Verdana", Font.PLAIN, 13));
+		btnNewButton.setForeground(new Color(0, 0, 0));
+		btnNewButton.setBounds(243, 339, 96, 34);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Back");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mainpage obj=new mainpage();
+				obj.frame.setVisible(true);
+				Administrator.this.dispose();
+			}
+		});
+		btnNewButton_1.setBounds(415, 339, 96, 35);
+		contentPane.add(btnNewButton_1);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(363, 267, 148, 33);
+		contentPane.add(passwordField);
+		Administrator.this.getRootPane().setDefaultButton(btnNewButton);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\start-event-planning-service.jpg"));
+		lblNewLabel.setBounds(0, 0, 732, 503);
+		contentPane.add(lblNewLabel);
+		
+	}
+}
+
+
+//ADMIN FUNC
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
+
+public class adminfunc extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					adminfunc frame = new adminfunc();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public adminfunc() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 750, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnNewButton = new JButton("Guests");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				guestadmin obj = new guestadmin();
+				obj.setVisible(true);
+				adminfunc.this.dispose();
+				
+			}
+		});
+		btnNewButton.setBounds(479, 231, 131, 40);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Teams");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				teamadmin obj = new teamadmin();
+				obj.setVisible(true);
+				adminfunc.this.dispose();
+			}
+		});
+		btnNewButton_1.setBounds(109, 231, 131, 40);
+		contentPane.add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Clients");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clientadmin obj = new clientadmin();
+				obj.setVisible(true);
+				adminfunc.this.dispose();
+			}
+		});
+		btnNewButton_2.setBounds(109, 118, 131, 40);
+		contentPane.add(btnNewButton_2);
+		
+		JButton btnNewButton_4 = new JButton("Log Out");
+		btnNewButton_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Administrator obj = new Administrator();
+				obj.setVisible(true);
+				adminfunc.this.dispose();
+			}
+		});
+		btnNewButton_4.setBounds(589, 450, 131, 40);
+		contentPane.add(btnNewButton_4);
+		
+		JButton btnNewButton_5 = new JButton("Events");
+		btnNewButton_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				eventsadmin obj = new eventsadmin();
+				obj.setVisible(true);
+				adminfunc.this.dispose();
+			}
+		});
+		btnNewButton_5.setBounds(479, 118, 131, 40);
+		contentPane.add(btnNewButton_5);
+		
+		JButton btnNewButton_3 = new JButton("Client Requests");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clientreq obj = new clientreq();
+				obj.setVisible(true);
+				adminfunc.this.dispose();
+			}
+		});
+		btnNewButton_3.setBounds(297, 118, 131, 40);
+		contentPane.add(btnNewButton_3);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\start-event-planning-service.jpg"));
+		lblNewLabel.setBounds(0, 0, 732, 503);
+		contentPane.add(lblNewLabel);
+	}
+}
+
+
+
+//CLIENT ADMIN
+
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JTable;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import javax.swing.JTextField;
+import java.awt.Font;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+
+public class clientadmin extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	private JTextField cn;
+	private JTextField id;
+	private JTextField Bud;
+	private JTextField pn;
+	private JTextField eve;
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					clientadmin frame = new clientadmin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public clientadmin() {
+		con=sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1050, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 13, 708, 403);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JButton btnNewButton = new JButton("Back");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				adminfunc obj = new adminfunc();
+				obj.setVisible(true);
+				clientadmin.this.dispose();
+			}
+		});
+		btnNewButton.setBounds(12, 457, 105, 33);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Insert");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try
+				{String sql="insert into client ( CLIENTNAME,CLIENTID, BUDGET  ,  PHONENO ,REQUIRED_EVENT) values(?,?,?,?,?)";
+				pst=con.prepareStatement(sql);
+			       
+				pst.setString(1,cn .getText());
+				pst.setString(2,id.getText());
+				pst.setString(3,Bud.getText());
+				pst.setString(4,pn.getText());
+				pst.setString(5,eve.getText());
+				
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data inserted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){JOptionPane.showMessageDialog(null, "Please enter valid details");}
+				
+			}
+		});
+		btnNewButton_1.setBounds(798, 457, 105, 33);
+		contentPane.add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Load Table");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{
+					String sql="select * from client";
+					pst=con.prepareStatement(sql);
+					rs=pst.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch(Exception e1)
+				{
+					JOptionPane.showMessageDialog(null,e1);
+					
+				}
+			}
+		});
+		btnNewButton_2.setBounds(681, 457, 105, 33);
+		contentPane.add(btnNewButton_2);
+		
+		JButton btnNewButton_3 = new JButton("Delete");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{String sql="delete from client where clientname = '"+cn.getText()+"' AND clientid = '"+id.getText()+"'";
+				pst=con.prepareStatement(sql);
+			
+							
+			
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data deleted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){System.out.println(t);
+				}
+			}
+		});
+		btnNewButton_3.setBounds(915, 457, 105, 33);
+		contentPane.add(btnNewButton_3);
+		
+		cn = new JTextField();
+		cn.setBounds(904, 69, 116, 22);
+		contentPane.add(cn);
+		cn.setColumns(10);
+		
+		id = new JTextField();
+		id.setBounds(904, 104, 116, 22);
+		contentPane.add(id);
+		id.setColumns(10);
+		
+		Bud = new JTextField();
+		Bud.setBounds(904, 139, 116, 22);
+		contentPane.add(Bud);
+		Bud.setColumns(10);
+		
+		pn = new JTextField();
+		pn.setBounds(904, 174, 116, 22);
+		contentPane.add(pn);
+		pn.setColumns(10);
+		
+		eve = new JTextField();
+		eve.setBounds(904, 209, 116, 22);
+		contentPane.add(eve);
+		eve.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Client Name");
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_1.setBounds(732, 72, 116, 16);
+		contentPane.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Client ID:");
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_2.setBounds(730, 107, 91, 16);
+		contentPane.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Budget");
+		lblNewLabel_3.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_3.setBounds(732, 142, 89, 16);
+		contentPane.add(lblNewLabel_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("Phone NO.");
+		lblNewLabel_4.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_4.setBounds(732, 177, 89, 16);
+		contentPane.add(lblNewLabel_4);
+		
+		JLabel lblNewLabel_5 = new JLabel("Required Event");
+		lblNewLabel_5.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_5.setBounds(732, 212, 134, 16);
+		contentPane.add(lblNewLabel_5);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\Corporate-parties-in-London1.jpg"));
+		lblNewLabel.setBounds(0, 0, 1032, 503);
+		contentPane.add(lblNewLabel);
+	}
+}
+
+
+//CLIENT REQUIREMENTS
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+
+public class clientreq extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	private JButton btnNewButton_1;
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+	private JLabel lblNewLabel;
+	private JButton btnNewButton_2;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					clientreq frame = new clientreq();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public clientreq() {
+		con=sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 750, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(67, 13, 571, 285);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JButton btnNewButton = new JButton("Back");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				adminfunc obj = new adminfunc();
+				obj.setVisible(true);
+				clientreq.this.dispose();
+			}
+		});
+		btnNewButton.setBounds(12, 455, 117, 35);
+		contentPane.add(btnNewButton);
+		
+		btnNewButton_1 = new JButton("Load table");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{
+					String sql="select * from clientreqevent";
+					pst=con.prepareStatement(sql);
+					rs=pst.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch(Exception e1)
+				{
+					JOptionPane.showMessageDialog(null,e1);
+					
+				}
+			}
+		});
+		btnNewButton_1.setBounds(615, 455, 117, 35);
+		contentPane.add(btnNewButton_1);
+		
+		btnNewButton_2 = new JButton("Delete all entries");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{String sql="delete clientreqevent";
+				pst=con.prepareStatement(sql);
+			
+							
+			
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data deleted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){System.out.println(t);
+				}
+			}
+		});
+		btnNewButton_2.setBounds(480, 455, 129, 35);
+		contentPane.add(btnNewButton_2);
+		
+		lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\Corporate-parties-in-London1.jpg"));
+		lblNewLabel.setBounds(0, 0, 732, 503);
+		contentPane.add(lblNewLabel);
+	}
+
+}
+
+
+//EVENTS ADMIN
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import javax.swing.JOptionPane;
+import net.proteanit.sql.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTable;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JTextField;
+import java.awt.Font;
+import javax.swing.ImageIcon;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+
+public class eventsadmin extends JFrame {
+
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textField_5;
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+	private JTable table;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					eventsadmin frame = new eventsadmin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public eventsadmin() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		con=sql_connection.Connect();
+		setBounds(100, 100, 1050, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JButton btnNewButton = new JButton("Delete");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{String sql="delete from events where EVENTNAME = '"+textField.getText()+"' AND EVENTID = '"+textField_1.getText()+"'";
+				pst=con.prepareStatement(sql);
+			
+							
+			
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data deleted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){System.out.println(t);
+				}
+				
+			}
+			
+		});
+		btnNewButton.setBounds(914, 459, 106, 31);
+		contentPane.add(btnNewButton);
+		
+		JButton btnNewButton_1 = new JButton("Insert");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{String sql="insert into events (EVENTNAME, EVENTID,EVENTVENUE,EDATETIME,ECLIENTID) values(?,?,?,?,?)";
+				pst=con.prepareStatement(sql);
+				pst.setString(1,textField.getText());
+				pst.setString(2,textField_1.getText());
+				pst.setString(3,textField_2.getText());
+				pst.setString(4,textField_3.getText());
+				pst.setString(5,textField_5.getText());
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data inserted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){JOptionPane.showMessageDialog(null, "Please enter valid details");}
+				
+			}
+		});
+		btnNewButton_1.setBounds(796, 459, 106, 31);
+		contentPane.add(btnNewButton_1);
+		
+		JButton load = new JButton("Load Table");
+		load.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try
+				{
+					String sql="select * from events";
+					pst=con.prepareStatement(sql);
+					rs=pst.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch(Exception e1)
+				{
+					JOptionPane.showMessageDialog(null,e1);
+					
+				}
+				
+			}
+		});
+		load.setBounds(678, 459, 106, 31);
+		contentPane.add(load);
+		
+		JButton btnNewButton_3 = new JButton("Back");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				adminfunc obj = new adminfunc();
+				obj.setVisible(true);
+				eventsadmin.this.dispose();
+			}
+		});
+		btnNewButton_3.setBounds(12, 459, 106, 31);
+		contentPane.add(btnNewButton_3);
+		
+		textField = new JTextField();
+		textField.setBounds(904, 60, 116, 22);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(904, 95, 116, 22);
+		contentPane.add(textField_1);
+		textField_1.setColumns(10);
+		
+		textField_2 = new JTextField();
+		textField_2.setBounds(904, 127, 116, 22);
+		contentPane.add(textField_2);
+		textField_2.setColumns(10);
+		
+		textField_3 = new JTextField();
+		textField_3.setBounds(904, 162, 116, 22);
+		contentPane.add(textField_3);
+		textField_3.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("Event Name:");
+		lblNewLabel.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel.setBounds(733, 63, 169, 16);
+		contentPane.add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Event ID:");
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_1.setBounds(733, 98, 169, 16);
+		contentPane.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Event Venue:");
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_2.setBounds(733, 130, 169, 16);
+		contentPane.add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Event Date & Time");
+		lblNewLabel_3.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_3.setBounds(733, 165, 169, 16);
+		contentPane.add(lblNewLabel_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("Client ID");
+		lblNewLabel_4.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_4.setBounds(733, 198, 169, 16);
+		contentPane.add(lblNewLabel_4);
+		
+		textField_5 = new JTextField();
+		textField_5.setBounds(904, 197, 116, 22);
+		contentPane.add(textField_5);
+		textField_5.setColumns(10);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 13, 709, 375);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+			}
+		));
+		
+		JLabel lblNewLabel_5 = new JLabel("New label");
+		lblNewLabel_5.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\Corporate-parties-in-London1.jpg"));
+		lblNewLabel_5.setBounds(0, 0, 1032, 503);
+		contentPane.add(lblNewLabel_5);
+	}
+}
+
+//TEAM ADMIN
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JTable;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import javax.swing.JTextField;
+import java.awt.Font;
+import javax.swing.JScrollPane;
+
+public class teamadmin extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	private JButton btnNewButton_1;
+	private JButton btnNewButton_2;
+	private JButton btnNewButton_3;
+	private JLabel lblNewLabel;
+	private JTextField teamid;
+	private JTextField Clientid;
+	private JTextField Total;
+	private JTextField advancepaid;
+	private JTextField Eventid;
+	private JLabel lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JLabel lblNewLabel_4;
+	private JLabel lblNewLabel_5;
+	private JLabel lblNewLabel_6;
+	private JTextField EventHandled;
+	private JLabel lblNewLabel_7;
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+	private JScrollPane scrollPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					teamadmin frame = new teamadmin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public teamadmin() {
+		con=sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1050, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(13, 13, 707, 404);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JButton btnNewButton = new JButton("Back");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				adminfunc obj = new adminfunc();
+				obj.setVisible(true);
+				teamadmin.this.dispose();
+			}
+		});
+		btnNewButton.setBounds(13, 458, 107, 32);
+		contentPane.add(btnNewButton);
+		
+		btnNewButton_1 = new JButton("Delete");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{String sql="delete from team where teamid = '"+teamid.getText()+"'";
+				pst=con.prepareStatement(sql);
+			
+							
+			
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data deleted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){System.out.println(t);
+				}
+			}
+		});
+		btnNewButton_1.setBounds(913, 458, 107, 32);
+		contentPane.add(btnNewButton_1);
+		
+		btnNewButton_2 = new JButton("Load Table");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{
+					String sql="select * from team";
+					pst=con.prepareStatement(sql);
+					rs=pst.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch(Exception e1)
+				{
+					JOptionPane.showMessageDialog(null,e1);
+					
+				}
+			}
+		});
+		btnNewButton_2.setBounds(675, 458, 107, 32);
+		contentPane.add(btnNewButton_2);
+		
+		btnNewButton_3 = new JButton("Insert");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				try
+				{String sql="insert into team ( TEAMID,CID,TOTAL,ADVANCEPAID,EID,EVENTHANDLED) values(?,?,?,?,?,?)";
+				pst=con.prepareStatement(sql);
+			       
+				pst.setString(1,teamid .getText());
+				pst.setString(2,Clientid.getText());
+				pst.setString(3,Total.getText());
+				pst.setString(4,advancepaid.getText());
+				pst.setString(5,Eventid.getText());
+				pst.setString(6,EventHandled.getText());
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data inserted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){JOptionPane.showMessageDialog(null, "Please enter valid details");}
+				
+			}
+		});
+		btnNewButton_3.setBounds(794, 458, 107, 32);
+		contentPane.add(btnNewButton_3);
+		
+		teamid = new JTextField();
+		teamid.setBounds(904, 83, 116, 22);
+		contentPane.add(teamid);
+		teamid.setColumns(10);
+		
+		Clientid = new JTextField();
+		Clientid.setBounds(904, 118, 116, 22);
+		contentPane.add(Clientid);
+		Clientid.setColumns(10);
+		
+		Total = new JTextField();
+		Total.setBounds(904, 153, 116, 22);
+		contentPane.add(Total);
+		Total.setColumns(10);
+		
+		advancepaid = new JTextField();
+		advancepaid.setBounds(904, 188, 116, 22);
+		contentPane.add(advancepaid);
+		advancepaid.setColumns(10);
+		
+		Eventid = new JTextField();
+		Eventid.setBounds(904, 223, 116, 22);
+		contentPane.add(Eventid);
+		Eventid.setColumns(10);
+		
+		EventHandled = new JTextField();
+		EventHandled.setBounds(904, 258, 116, 22);
+		contentPane.add(EventHandled);
+		EventHandled.setColumns(10);
+		
+		lblNewLabel_1 = new JLabel("Team ID:");
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_1.setBounds(732, 84, 96, 16);
+		contentPane.add(lblNewLabel_1);
+		
+		lblNewLabel_2 = new JLabel("Client ID:");
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_2.setBounds(732, 119, 96, 16);
+		contentPane.add(lblNewLabel_2);
+		
+		lblNewLabel_4 = new JLabel("Total Amount:");
+		lblNewLabel_4.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_4.setBounds(732, 154, 130, 16);
+		contentPane.add(lblNewLabel_4);
+		
+		lblNewLabel_5 = new JLabel("Advance Paid");
+		lblNewLabel_5.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_5.setBounds(732, 189, 130, 16);
+		contentPane.add(lblNewLabel_5);
+		
+		lblNewLabel_6 = new JLabel("Event ID:");
+		lblNewLabel_6.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_6.setBounds(732, 224, 96, 16);
+		contentPane.add(lblNewLabel_6);
+		
+		lblNewLabel_7 = new JLabel("Event Handled");
+		lblNewLabel_7.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_7.setBounds(732, 259, 130, 16);
+		contentPane.add(lblNewLabel_7);
+		
+		lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\Corporate-parties-in-London1.jpg"));
+		lblNewLabel.setBounds(0, 0, 1032, 503);
+		contentPane.add(lblNewLabel);
+	}
+
+}
+
+
+//GUEST ADMIN
+
+package frontenddbms;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JTable;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JScrollBar;
+import java.awt.Color;
+import javax.swing.JScrollPane;
+
+public class guestadmin extends JFrame {
+
+	private JPanel contentPane;
+	private JTable table;
+	private JButton btnNewButton_1;
+	private JButton btnNewButton_2;
+	private JButton btnNewButton_3;
+	private JLabel lblNewLabel_1;
+	private JLabel lblNewLabel_2;
+	private JLabel lblNewLabel_3;
+	private JLabel lblNewLabel_4;
+	private JLabel lblNewLabel_5;
+	private JLabel lblNewLabel_6;
+	private JTextField name;
+	private JTextField gid;
+	private JTextField emailid;
+	private JTextField phone;
+	private JTextField rooms;
+	private JTextField eid;
+
+	Connection con = null;
+	ResultSet rs =null;
+	PreparedStatement pst = null;
+	private JScrollPane scrollPane;
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					guestadmin frame = new guestadmin();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public guestadmin() {
+		con=sql_connection.Connect();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 1050, 550);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(12, 13, 708, 399);
+		contentPane.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		
+		JScrollBar js = new JScrollBar();
+		js.setVisible(true);
+		getContentPane().add(js);
+		
+		JButton btnNewButton = new JButton("Back");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				adminfunc obj = new adminfunc();
+				obj.setVisible(true);
+				guestadmin.this.dispose();
+			}
+		});
+		btnNewButton.setBounds(12, 458, 106, 32);
+		contentPane.add(btnNewButton);
+		
+		btnNewButton_1 = new JButton("Insert");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				try
+				{String sql="insert into guests (GUESTNAME,GUESTID,GUESTEMAIL,GUESTPHONE,ROOMSREQ,EVID) values(?,?,?,?,?,?)";
+				pst=con.prepareStatement(sql);
+				pst.setString(1,name.getText());
+				pst.setString(2,gid.getText());
+				pst.setString(3,emailid.getText());
+				pst.setString(4,phone.getText());
+				pst.setString(5,rooms.getText());
+				pst.setString(6,eid.getText());
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data inserted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){JOptionPane.showMessageDialog(null, "Please enter valid details");}
+				
+				
+				
+			}
+		});
+		btnNewButton_1.setBounds(789, 458, 106, 32);
+		contentPane.add(btnNewButton_1);
+		
+		btnNewButton_2 = new JButton("Load Table ");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{
+					String sql="select * from guests";
+					pst=con.prepareStatement(sql);
+					rs=pst.executeQuery();
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+				}
+				catch(Exception e1)
+				{
+					JOptionPane.showMessageDialog(null,e1);
+					
+				}
+			}
+		});
+		btnNewButton_2.setBounds(659, 458, 106, 32);
+		contentPane.add(btnNewButton_2);
+		
+		btnNewButton_3 = new JButton("Delete");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try
+				{String sql="delete from guests where guestname = '"+name.getText()+"' AND guestid = '"+gid.getText()+"'";
+				pst=con.prepareStatement(sql);
+			
+							
+			
+				pst.execute();
+				JOptionPane.showMessageDialog(null,"Data deleted" );
+				//pst.setString(5),textField_4.getText());
+				}
+				catch(Exception t){System.out.println(t);
+				}
+			}
+		});
+		btnNewButton_3.setBounds(914, 458, 106, 32);
+		contentPane.add(btnNewButton_3);
+		
+		lblNewLabel_1 = new JLabel("Guest ID");
+		lblNewLabel_1.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_1.setBounds(732, 99, 103, 21);
+		contentPane.add(lblNewLabel_1);
+		
+		lblNewLabel_2 = new JLabel("Guest Name");
+		lblNewLabel_2.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_2.setBounds(732, 67, 103, 19);
+		contentPane.add(lblNewLabel_2);
+		
+		lblNewLabel_4 = new JLabel("Guest EmailID:");
+		lblNewLabel_4.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_4.setBounds(732, 135, 132, 21);
+		contentPane.add(lblNewLabel_4);
+		
+		lblNewLabel_3 = new JLabel("Phone no.");
+		lblNewLabel_3.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_3.setBounds(732, 169, 103, 21);
+		contentPane.add(lblNewLabel_3);
+		
+		lblNewLabel_6 = new JLabel("Event ID");
+		lblNewLabel_6.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_6.setBounds(732, 241, 103, 21);
+		contentPane.add(lblNewLabel_6);
+		
+		lblNewLabel_5 = new JLabel("Rooms Req");
+		lblNewLabel_5.setFont(new Font("Verdana", Font.PLAIN, 16));
+		lblNewLabel_5.setBounds(732, 203, 103, 21);
+		contentPane.add(lblNewLabel_5);
+		
+		name = new JTextField();
+		name.setBounds(904, 67, 116, 22);
+		contentPane.add(name);
+		name.setColumns(10);
+		
+		gid = new JTextField();
+		gid.setBounds(904, 100, 116, 22);
+		contentPane.add(gid);
+		gid.setColumns(10);
+		
+		emailid = new JTextField();
+		emailid.setBounds(904, 134, 116, 22);
+		contentPane.add(emailid);
+		emailid.setColumns(10);
+		
+		phone = new JTextField();
+		phone.setBounds(904, 168, 116, 22);
+		contentPane.add(phone);
+		phone.setColumns(10);
+		
+		rooms = new JTextField();
+		rooms.setBounds(904, 202, 116, 22);
+		contentPane.add(rooms);
+		rooms.setColumns(10);
+		
+		eid = new JTextField();
+		eid.setBounds(904, 240, 116, 22);
+		contentPane.add(eid);
+		eid.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon("H:\\CSE\\Project\\pics\\Corporate-parties-in-London1.jpg"));
+		lblNewLabel.setBounds(0, 0, 1032, 503);
+		contentPane.add(lblNewLabel);
+	}
+}
+
+//LOGIN
+package frontenddbms;
+
+public class login {
+   public static int lid;
+}
